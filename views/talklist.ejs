@@ -1,0 +1,92 @@
+<!-- talklist.ejs -->
+
+
+<style>
+    .roundedDivBox {
+        border: 2px solid green;
+        border-radius: 25px;
+        background: #caFFa9;
+        padding: 10px;
+        width: 70%;
+        margin: 6px;
+        display: block;
+    }
+
+    .roundedDivBox:hover {
+        background: #ffFF87;
+    }
+
+    .attending-talk {
+        background: #babaFF;
+    }
+
+    .attending-talkeven-row {
+        background: #9797FF;
+    }
+
+    .even-row {
+        background: #a8FF87;
+    }
+
+
+</style>
+<title>
+    Talk Results
+</title>
+
+<br>
+
+<h3>Talk Results:</h3>
+<br>
+
+<a href="javascript:void(0)" onClick="toggleSnippets()">Toggle Summaries</a> <br>
+<br>
+
+
+<div class="list-group">
+    <!-- loop over talk posts and render short view -->
+    <%
+    if (talks.length == 0) {
+    %>
+        No matching talks for your date range and search, please try again.
+    <%
+    }
+    %>
+
+    <% talks.forEach(function(talk, i) {
+        // Different colors for attending status here.
+        let attendingClass = ""
+        // console.log('DEBUG talk.talkAttendees = ', talk.talkAttendees)
+
+        if (talk.talkAttendees && talk.talkAttendees[0] && talk.talkAttendees[0].status == "attending") {
+            // console.log('server debug status: ', job.userJobs[0].status)  // DEBUG
+            attendingClass = "attending-talk"
+        }
+    %>
+
+    <div class="roundedDivBox <%= attendingClass %><%= i % 2 == 0 ? "even-row" : "" %> ">
+        <%= i + 1 %>.
+        <a href="/api/talks/<%= talk.id %>" class="list-group-item">
+            <b class="list-group-item-heading"><%= talk.name %></b></a>
+        - <b><i><%= talk.company %></i></b> - <%= attendingClass %>
+
+        <p class="snippet"> <%- talk.summary %> </p>
+
+
+    </div>
+    <% }) %>
+</div>
+
+
+<script>
+    // If summaries are visible toggle them to hidden, and vice versa.
+    function toggleSnippets() {
+        let elements = document.getElementsByClassName("snippet")
+        // foreach instead.
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i].style.display === "none") elements[i].style.display = "block";
+            else elements[i].style.display = "none";
+        }
+    }
+
+</script>

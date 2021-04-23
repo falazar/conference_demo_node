@@ -1,0 +1,116 @@
+<!-- views/talks.ejs -->
+
+
+<!--TODO can move all css out-->
+<style>
+    .roundedButtonGreen {
+        border: 2px solid green;
+        border-radius: 25px;
+        background: #73AD21;
+        padding: 20px;
+        display: inline-block;
+        cursor: grab;
+        /*TODO onclick change background color*/
+    }
+
+    .roundedButtonRed {
+        border: 2px solid #6f1e04;
+        border-radius: 25px;
+        background: #cd3504;
+        padding: 20px;
+        display: inline-block;
+        cursor: grab;
+    }
+
+    .darkened-image {
+        filter: brightness(70%);
+    }
+
+</style>
+
+<a href="/api/talks">Back to Talks List</a> <br/><br/>
+
+<title>
+    Conference Talk Page
+</title>
+
+<div>
+    <h2><%= name %></h2>
+
+    <p>Company: <%= company %></p>
+
+    <p>Email: <%= email %> </p>
+
+    <p>Summary: <%- summary %></p>
+
+    <p>Bio: <%- bio %></p>
+
+    <p>Link: <%- link %></p>
+
+    <p>Capacity: <%- capacity %></p>
+
+    <!-- Main Actions available now -->
+    <div id=applyButton class="roundedButtonGreen" style="display:<%= talkAttendeeId ? "none" : "inline-block"%>" onclick="markUserAttending(<%= id %>)">Mark Attending</div>
+    <div id=removeButton class="roundedButtonRed"  style="display:<%= talkAttendeeId ? "inline-block" : "none"%>" onclick="removeUserAttending()">Remove from Attending</div>
+
+    <br/>
+    (TODO check capacity before allowing someone to sign up)
+    <br>
+
+
+
+
+    <hr>
+</div>
+
+
+<script>
+
+    let talkAttendeeId = '<%= talkAttendeeId %>';
+
+    // A user is attending this talk, update now.
+    function markUserAttending(id) {
+        console.log('Setting talkAttendee to the talk now!!!')
+
+        // Toggle buttons displayed.
+        document.getElementById('applyButton').style.display = 'none'
+        document.getElementById('removeButton').style.display = 'inline-block'
+
+        // Change our talkAttendee status... call a post to update the object.
+        let content = {
+            userId: '11',  // hardcoded for now... TODO proper auth.
+            talkId: id,
+            status: 'attending'
+        };
+
+        fetch('http://localhost:8081/api/talkAttendees/', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(content)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('data = ', data)
+
+                // reset talkAttendeeId now
+                talkAttendeeId = data.id;
+            });
+    }
+
+    function removeUserAttending() {
+        console.log('Marking talkAttendee removed now!!!')
+
+        document.getElementById('removeButton').style.display = 'none'
+        document.getElementById('applyButton').style.display = 'inline-block'
+
+        fetch('http://localhost:8081/api/talkAttendees/'+talkAttendeeId, { method: 'delete'})
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+            });
+
+    }
+
+</script>

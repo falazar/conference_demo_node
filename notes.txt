@@ -1,0 +1,18 @@
+Create a conference booking system api
+
+Three models needed
+
+talk
+user
+talkAttendee join table.
+
+Initial work to create objects db, and get up and running,
+< 1 hour
+need to update controller
+and the two ejs template files still.
+
+
+
+
+
+
